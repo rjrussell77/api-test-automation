@@ -14,38 +14,55 @@ public class ApiStepDefinitions {
 
     @Given("the API is available")
     public void the_api_is_available() {
-        RestAssured.baseURI = "http://127.0.0.1:5000";
-    
+        RestAssured.baseURI = "http://127.0.0.1:5001";
+
         Response healthCheck = RestAssured
             .given()
             .header("Authorization", "Bearer token") // if needed
             .when()
             .get("/");  // or a known valid endpoint like /users
-    
+
         if (healthCheck.getStatusCode() >= 500) {
             throw new AssertionError("API server is not available. Status code: " + healthCheck.getStatusCode());
         }
     }
-    
+
     @Given("I am not authenticated")
     public void i_am_not_authenticated() {
         RestAssured.baseURI = "http://127.0.0.1";
-        RestAssured.port = 5000;
+        RestAssured.port = 5001;
         request = given().auth().none();
     }
 
     @When("I send a GET request to {string}")
     public void i_send_a_get_request_to(String endpoint) {
         response = RestAssured.given()
+            .header("Authorization", "Bearer token") // if needed
+            .when()
+            .get(endpoint);
+    }
+
+    @When("I send a GET request to {string} without authentication")
+    public void i_send_a_get_request_to_without_authentication(String endpoint) {
+        response = RestAssured.given()
+            .auth().none()
+            .when()
+            .get(endpoint);
+    }
+
+    @When("I send a GET request to {string} with authentication")
+    public void i_send_a_get_request_to_with_authentication(String endpoint) {
+        response = RestAssured.given()
             .header("Authorization", "Bearer token")
             .when()
-            .get(endpoint);  // Remove baseURI since endpoint already includes the full path
+            .get(endpoint);
     }
 
     @When("I send a POST request to {string} with payload {string}")
     public void i_send_a_post_request_to_with_payload(String endpoint, String payload) {
         response = RestAssured.given()
             .header("Content-Type", "application/json")
+            .header("Authorization", "Bearer token") // if needed
             .body(payload)
             .when()
             .post(endpoint);

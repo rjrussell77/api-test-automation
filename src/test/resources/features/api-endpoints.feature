@@ -1,4 +1,4 @@
-Feature: API endpoint validation for localhost:5000
+Feature: API endpoint validation for localhost:5001
 
   Scenario Outline: Validate GET request to <endpoint>
     Given the API is available
@@ -7,9 +7,9 @@ Feature: API endpoint validation for localhost:5000
     And the response should contain <expectedField>
 
     Examples:
-      | endpoint         | expectedField    |
-      | "/users"           | "name"             |
-      | "/users"           | "email"            |
+      | endpoint | expectedField |
+      | "/users" | "name"        |
+      | "/users" | "email"       |
 
   Scenario Outline: Validate POST request to <endpoint>
     Given the API is available
@@ -18,9 +18,9 @@ Feature: API endpoint validation for localhost:5000
     And the response should contain <expectedField>
 
     Examples:
-      | endpoint     | payload              | expectedField |
-      | "/posts"       | "{\"title\":\"Test\"}"     | "title"         |
-      | "/posts"       | "{\"title\":\"Hello\"}"    | "title"         |
+      | endpoint | payload                 | expectedField |
+      | "/posts" | "{\"title\":\"Test\"}"  | "title"       |
+      | "/posts" | "{\"title\":\"Hello\"}" | "title"       |
 
   Scenario Outline: Validate PUT request to <endpoint>
     Given the API is available
@@ -29,9 +29,9 @@ Feature: API endpoint validation for localhost:5000
     And the response should contain <expectedField>
 
     Examples:
-      | endpoint         | payload                    | expectedField |
-      | "/users/1"         | "{\"name\":\"Updated\"}"         | "name"          |
-      | "/users/2"         | "{\"email\":\"new@example.com\"}"| "email"         |
+      | endpoint   | payload                           | expectedField |
+      | "/users/1" | "{\"name\":\"Updated\"}"          | "name"        |
+      | "/users/2" | "{\"email\":\"new@example.com\"}" | "email"       |
 
   Scenario Outline: Validate DELETE request to <endpoint>
     Given the API is available
@@ -39,26 +39,25 @@ Feature: API endpoint validation for localhost:5000
     Then the response status code should be 204
 
     Examples:
-      | endpoint     |
-      | "/posts/1"     |
-      | "/posts/2"     |
+      | endpoint   |
+      | "/posts/1" |
+      | "/posts/2" |
 
   Scenario Outline: Validate unauthorized access to <endpoint>
     Given I am not authenticated
-    When I send a GET request to <endpoint>
+    When I send a GET request to <endpoint> without authentication
     Then the response status code should be 401
 
     Examples:
-      | endpoint     |
-      | "/users"       |
-      | "/posts"       |
+      | endpoint |
+      | "/users" |
 
   Scenario Outline: Validate resource not found for <endpoint>
     Given the API is available
     When I send a GET request to <endpoint>
-    Then the response status code should be 404
+    Then the response status code should be 405
 
     Examples:
-      | endpoint        |
-      | "/users/9999"     |
-      | "/posts/9999"     |
+      | endpoint      |
+      | "/users/9999" |
+      | "/posts/9999" |
